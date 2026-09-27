@@ -171,4 +171,177 @@
     </script>
 
 </body>
+</html><!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Aim Trainer</title>
+
+    <style>
+        body {
+            margin: 0;
+            background: #222;
+            color: white;
+            font-family: Arial;
+            overflow: hidden;
+        }
+
+        #placar {
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            font-size: 20px;
+            z-index: 10;
+            line-height: 1.6;
+        }
+
+        #alvo {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background: red;
+            border-radius: 50%;
+            cursor: crosshair;
+        }
+
+        #inicio {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 15px 30px;
+            font-size: 20px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="placar">
+        Tempo: <span id="tempo">30</span>s<br>
+        Acertos: <span id="acertos">0</span><br>
+        Erros: <span id="erros">0</span><br>
+        Precisão: <span id="precisao">0</span>%
+    </div>
+
+    <button id="inicio">COMEÇAR</button>
+
+    <div id="alvo" style="display: none;"></div>
+
+    <script>
+
+        const alvo = document.getElementById("alvo");
+        const inicio = document.getElementById("inicio");
+
+        const tempoTexto = document.getElementById("tempo");
+        const acertosTexto = document.getElementById("acertos");
+        const errosTexto = document.getElementById("erros");
+        const precisaoTexto = document.getElementById("precisao");
+
+        let acertos = 0;
+        let erros = 0;
+        let tempo = 30;
+        let jogando = false;
+        let intervalo;
+
+        function moverAlvo() {
+
+            const x = Math.random() *
+                (window.innerWidth - 60);
+
+            const y = Math.random() *
+                (window.innerHeight - 60);
+
+            alvo.style.left = x + "px";
+            alvo.style.top = y + "px";
+        }
+
+        function atualizarPrecisao() {
+
+            const total = acertos + erros;
+
+            if (total === 0) {
+                precisaoTexto.textContent = 0;
+            } else {
+                const precisao =
+                    (acertos / total) * 100;
+
+                precisaoTexto.textContent =
+                    precisao.toFixed(1);
+            }
+        }
+
+        inicio.addEventListener("click", function() {
+
+            acertos = 0;
+            erros = 0;
+            tempo = 30;
+            jogando = true;
+
+            acertosTexto.textContent = 0;
+            errosTexto.textContent = 0;
+            tempoTexto.textContent = 30;
+            precisaoTexto.textContent = 0;
+
+            inicio.style.display = "none";
+            alvo.style.display = "block";
+
+            moverAlvo();
+
+            intervalo = setInterval(function() {
+
+                tempo--;
+
+                tempoTexto.textContent = tempo;
+
+                if (tempo <= 0) {
+
+                    clearInterval(intervalo);
+
+                    jogando = false;
+
+                    alvo.style.display = "none";
+                    inicio.style.display = "block";
+
+                    inicio.textContent = "JOGAR NOVAMENTE";
+                }
+
+            }, 1000);
+
+        });
+
+        alvo.addEventListener("click", function(event) {
+
+            event.stopPropagation();
+
+            if (!jogando) return;
+
+            acertos++;
+
+            acertosTexto.textContent = acertos;
+
+            atualizarPrecisao();
+
+            moverAlvo();
+
+        });
+
+        document.body.addEventListener("click", function(event) {
+
+            if (!jogando) return;
+
+            if (event.target === alvo) return;
+
+            erros++;
+
+            errosTexto.textContent = erros;
+
+            atualizarPrecisao();
+
+        });
+
+    </script>
+
+</body>
 </html>
